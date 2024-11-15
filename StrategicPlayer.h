@@ -9,6 +9,7 @@
 
 class StrategicPlayer {
 public:
+    char name;
 
     StrategicPlayer();
     ~StrategicPlayer();

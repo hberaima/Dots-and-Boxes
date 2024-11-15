@@ -9,7 +9,7 @@
 
 class RandomPlayer {
 public:
-
+    char name;
     RandomPlayer();
     ~RandomPlayer();
 
