@@ -9,6 +9,7 @@
 
 class RandomPlayer {
 public:
+
     RandomPlayer();
     ~RandomPlayer();
 
@@ -17,7 +18,8 @@ public:
 
 private:
     // Member variables
-    int variable;
+    int points;
+    std::string name;
 };
 
 #endif // HEADER_GUARD

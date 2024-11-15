@@ -1,20 +1,7 @@
 #include <iostream>
 #include <fstream>
-
-class RandomPlayer {
-    public:
-        std::string name;
-        void SelectLineLocation();    
-};
-
-class StrategicPlayer{ 
-    public:
-        std::string name;
-        void SelectLineLocation();
-};
-
-
-
+#include "RandomPlayer.h"
+#include "StrategicPlayer.h"
 
 int main (){
 
@@ -49,21 +36,7 @@ int main (){
     int actualColumns = ((2 * columns) - 1);
 
     // Creating the game board dynamically
-    char** board = new char*[actualRows];
-    for (int i = 0; i < actualRows; ++i) {
-        board[i] = new char[actualColumns];
 
-        // Fill board based on the specified format
-        if (i % 2 == 0) {  // Rows with dots
-            for (int j = 0; j < actualColumns; ++j) {
-                board[i][j] = (j % 2 == 0) ? '.' : ' ';  // Dot in even columns, space in odd
-            }
-        } else {  // Rows with spaces
-            for (int j = 0; j < actualColumns; ++j) {
-                board[i][j] = ' ';  // All spaces
-            }
-        }
-    }
 
     // assingn players 
     RandomPlayer RandomPlayer;
@@ -90,22 +63,4 @@ int main (){
 
 
 return 0;
-}
-
-void initialize_board (int actualRows,int actualColumns ){
-char** board = new char*[actualRows];
-    for (int i = 0; i < actualRows; ++i) {
-        board[i] = new char[actualColumns];
-
-        // Fill board based on the specified format
-        if (i % 2 == 0) {  // Rows with dots
-            for (int j = 0; j < actualColumns; ++j) {
-                board[i][j] = (j % 2 == 0) ? '.' : ' ';  // Dot in even columns, space in odd
-            }
-        } else {  // Rows with spaces
-            for (int j = 0; j < actualColumns; ++j) {
-                board[i][j] = ' ';  // All spaces
-            }
-        }
-    }
 }
