@@ -4,27 +4,27 @@
 #include <iostream>
 #include <string>
 using namespace std;
+
 #ifndef _BOARD_
 #define _BOARD_
 
 class Board {
-    
 public:
-
-    Board(int dots_in_rows, int dots_in_cols);
+    Board(int rows, int columns);
     ~Board();
 
-    char& operator()(int row,int col);
-    // Member Functions
+    char& operator()(int row, int col);
     int GetAllEmptyLineLocations(int* empty_rows, int* empty_cols) const;
     string determineTurn();
-    string** createBoard(int rows, int columns);
-    
+    void printBoard() const;
+    char** gameBoard;
+
 private:
-    // Member variables
-    string** gameBoard;
+    int numRows;
+    int numCols;
     string currentPlayer;
-    void printBoard(string** board, int rows, int columns);
+
+    char** createBoard(int rows, int columns);
 };
 
-#endif // HEADER_GUARD
+#endif // _BOARD_

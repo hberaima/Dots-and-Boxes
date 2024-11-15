@@ -14,6 +14,7 @@
 //-------------------------------------------------------------------------------------
 
 //i love you
+#include "Board.cxx"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -49,6 +50,10 @@ int main() {
     rows = rows * 2 - 1;
     columns = columns * 2 - 1;
     
+    Board board(rows, columns);
+    
+    board.printBoard();
+
     char Player;
     string Playstyle;
     cout << "Please enter your Player Letter and Playstyle in the format 'B Random' (e.g Player B with a Random Playstyle)" << endl;
@@ -63,7 +68,6 @@ int main() {
 
 
 
-    printBoard(gameBoard, rows, columns);
 
     // Determine wether player has Random Dot Selection or Strategic
 
