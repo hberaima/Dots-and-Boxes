@@ -20,7 +20,7 @@
 using namespace std;
 
 
-// i hate you
+// wym you life doing the dishes
 int main() {
 ///////////////////// Read input1.txt file and create game Board
 // Initialize Variables
