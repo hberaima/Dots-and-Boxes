@@ -24,7 +24,7 @@ private:
     // Member variables
     string** gameBoard;
     string currentPlayer;
-    void printBoard(string** board, int rows, int columns)
+    void printBoard(string** board, int rows, int columns);
 };
 
 #endif // HEADER_GUARD
