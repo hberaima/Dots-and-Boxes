@@ -20,20 +20,6 @@
 using namespace std;
 
 
-    cout << endl << "   ";
-    for (int j = 0; j < columns; j++) {
-        cout << j % 10;
-    }
-    cout << endl;
-    
-    for (int i = 0; i < rows; i++) {
-        cout << (i < 10 ? "0" : "") << i << " ";
-        for (int j = 0; j < columns; j++) {
-            cout << board[i][j];
-        }
-        cout << endl;
-    }
-}
 
 int main() {
 ///////////////////// Read input1.txt file and create game Board

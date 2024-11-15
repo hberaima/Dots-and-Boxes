@@ -18,9 +18,7 @@ Board::~Board() {
     // Destructor implementation
 }
 
-void Board::FunctionName() {
-    // Function implementation
-}
+
 void printBoard(string** board, int rows, int columns) { // Function to print board
     int counter = 1;
     cout << "   0";
@@ -34,3 +32,17 @@ void printBoard(string** board, int rows, int columns) { // Function to print bo
         }
     }
     
+        cout << endl << "   ";
+    for (int j = 0; j < columns; j++) {
+        cout << j % 10;
+    }
+    cout << endl;
+    
+    for (int i = 0; i < rows; i++) {
+        cout << (i < 10 ? "0" : "") << i << " ";
+        for (int j = 0; j < columns; j++) {
+            cout << board[i][j];
+        }
+        cout << endl;
+    }
+}
