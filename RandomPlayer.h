@@ -14,7 +14,7 @@ public:
     ~RandomPlayer();
 
     // Function to select a random line location on the board
-    void SelectLineLocation(int actualRows, int actualColumns, char** board, int emptyLocations[][2], int emptyCount, char playername);
+    void SelectLineLocation(int actualRows, int actualColumns, char** board, int** emptyLocations, int emptyCount, char playername);
 
     int getPoints();
 

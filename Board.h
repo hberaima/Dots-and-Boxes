@@ -12,8 +12,9 @@ public:
     // Public member functions
     void printBoard() const;  // Print the board to the console
     char** getBoard();
-    int GetAllEmptyLineLocations(int actualRows, int actualColumns, char** board, int emptyLocations[][2]);
-
+    int GetAllEmptyLineLocations(int actualRows, int actualColumns, char** board, int** emptyLocations);
+    int getRows();
+    int getColumns();
 private:
     // Private member variables
     int numRows, numCols;     // Dimensions of the board

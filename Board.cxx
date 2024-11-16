@@ -52,7 +52,7 @@ void Board::printBoard() const {
     }
 }
 
-int Board::GetAllEmptyLineLocations(int actualRows, int actualColumns, char** board, int emptyLocations[][2]) {
+int Board::GetAllEmptyLineLocations(int actualRows, int actualColumns, char** board, int** emptyLocations) {
     int count = 0;
 
     // Traverse the board to find empty spots (assuming empty is represented by ' ')
@@ -69,6 +69,6 @@ int Board::GetAllEmptyLineLocations(int actualRows, int actualColumns, char** bo
     return count;  // Return the number of empty spots
 }
 
-char** Board::getBoard() {
-    return gameBoard;
-}
+char** Board::getBoard() { return gameBoard;}
+int Board::getRows() { return numRows;}
+int Board::getColumns() {return numCols;}

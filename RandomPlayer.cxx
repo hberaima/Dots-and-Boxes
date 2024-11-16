@@ -14,7 +14,7 @@ RandomPlayer::~RandomPlayer() {
 }
 
 // Select a random line location
-void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** board, int emptyLocations[][2], int emptyCount, char playername) {
+void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** board, int** emptyLocations, int emptyCount, char playername) {
       if (emptyCount == 0) {
         std::cout << "No empty spots available!" << std::endl;
         return;
@@ -31,7 +31,7 @@ void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** 
     board[row][col] = tolower(playername);
 
     // Print a move
-    std::cout <<playername << " " <<row << col << std::endl;
+    std::cout <<playername << " " <<row << " " << col << std::endl;
 
     cout << "Done Selecting Line Location" << endl;
 
