@@ -6,7 +6,7 @@
 #include <string>
 using namespace std;
 
-// 
+// g++ -ansi -pedantic -std=c++14 -Wall main.cxx Board.cxx RandomPlayer.cxx StrategicPlayer.cxx -o main
 
 Board createBoard(string fileName) {
     int rows, columns;
