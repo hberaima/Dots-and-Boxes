@@ -75,21 +75,15 @@ int main() {
         char player1char, player2char;
         string playerstatus;
 
-        // Read input file
-        cout << "reading input file... " << endl << endl;
-        readInputFile("input1.txt", rows, columns, player1char, player2char, playerstatus);
-        cout << "done reading input file" << endl;
-        // Create the game board
-        cout << "creating board using createBoard Func" << endl;
-        Board board = createBoard("input1.txt");
-        cout << "done." << endl << endl;
+        readInputFile("input1.txt", rows, columns, player1char, player2char, playerstatus);         // Read input file
+        Board board = createBoard("input1.txt"); // Create the game board
 
         // Initialize empty locations
-        cout << "getting all empty line locations" << endl << endl;
 
-        int maxEmptyLocations = board.getRows() * board.getColumns();
-        int** emptyLocations = new int*[maxEmptyLocations];
-        for (int i = 0; i < maxEmptyLocations; ++i) {
+        int boardSize = board.getRows() * board.getColumns(); // number of maximum locations for board
+
+        int** emptyLocations = new int*[boardSize];
+        for (int i = 0; i < boardSize; ++i) {
             emptyLocations[i] = new int[2];
         }
 
@@ -107,13 +101,15 @@ int main() {
 
         // Main game loop
         cout << "Starting the first loop..." << endl << endl;
+        cout<< "Empty Count: "<<emptyCount << endl;
 
-        if (starter) {
-            while (true) {
+            while (emptyCount != 0) {
                 RPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, RPlayer->name);
-                break; // Placeholder for the game logic
+                emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
+               // break; // Placeholder for the game logic
             }
-        }
+            cout<<emptyCount << endl;
+
         cout << "done." << endl << endl;
 
         // Print final board state
@@ -122,14 +118,12 @@ int main() {
         cout << "done." << endl << endl;
 
         // Clean up dynamically allocated memory
-        for (int i = 0; i < maxEmptyLocations; ++i) {
+        for (int i = 0; i < boardSize; ++i) {
             delete[] emptyLocations[i];
         }
         delete[] emptyLocations;
-
         delete RPlayer;
         delete SPlayer;
-
         return 0;
 
 }

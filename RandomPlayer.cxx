@@ -21,7 +21,7 @@ void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** 
     }
 
     cout << "Selecting Line Location" << endl;
-    srand(time(nullptr));
+    srand(time(0));
     // Select a random empty spot
     int randomIndex = rand() % emptyCount;  // Get a random index using custom_rand
     int row = emptyLocations[randomIndex][0];
