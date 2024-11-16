@@ -5,8 +5,8 @@
 using namespace std;
 
 // Constructor: Initializes the player's name
-RandomPlayer::RandomPlayer(char playerName) : name(playerName) {
-    // No additional initialization needed
+RandomPlayer::RandomPlayer(char playerName) : name(playerName), points(0) {
+    int points = 0;
 }
 
 // Destructor: Clean up (empty as no dynamic memory is used)
@@ -20,6 +20,7 @@ void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** 
         return;
     }
 
+    cout << "Selecting Line Location" << endl;
     srand(time(nullptr));
     // Select a random empty spot
     int randomIndex = rand() % emptyCount;  // Get a random index using custom_rand
@@ -32,5 +33,10 @@ void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** 
     // Print a move
     std::cout <<playername << " " <<row << col << std::endl;
 
-    
+    cout << "Done Selecting Line Location" << endl;
+
+}
+
+int RandomPlayer::getPoints() {
+    return points;
 }

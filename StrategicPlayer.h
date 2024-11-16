@@ -1,26 +1,25 @@
-// Project Name
-// Author Name
-// Date
+#ifndef StrategicPlayer_H
+#define StrategicPlayer_H
 
-
-#include "Board.h"
-#ifndef HEADER_GUARD
-#define HEADER_GUARD
+#include "Board.h" 
 
 class StrategicPlayer {
 public:
-    char name;
+    char name;  
 
-    StrategicPlayer();
+    // Constructor to initialize the player's name
+    StrategicPlayer(char playerName);
+
+    // Destructor
     ~StrategicPlayer();
 
-    // Member functions
-    void selectLineLocation(Board& board, int& r, int & c);
+    // Function to select a random line location on the board
+    void SelectLineLocation(int actualRows, int actualColumns, char** board, int emptyLocations[][2], int emptyCount, char playername);
+
+    int getPoints();
 
 private:
-    // Member variables
     int points;
-    std::string name;
 };
 
-#endif // HEADER_GUARD
+#endif  // StrategicPlayer_H

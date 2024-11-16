@@ -1,90 +1,102 @@
-//----------------------------------------------------------------------------------
-// Name: Hamid Beraima
-// Email: hab5491@psu.edu
-// Class: CMPSC 330
-// Homework 4
-// Due Date: November 18, 2024
-//
-// Description: This program builds upon my previous dots and boxes assignment the program will read the
-// game settsings then create a two player game of dots and boxes
-//
-// Acknowledgement:
-// https://www.geeksforgeeks.org/doubly-linked-list-in-cpp/ -- Used as Refresher to create a Structure to hold player info
-// https://stackoverflow.com/a/30387118
-//-------------------------------------------------------------------------------------
-
-//i love you
-#include "Board.cxx"
+#include "Board.h"
+#include "RandomPlayer.h"
+#include "StrategicPlayer.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 using namespace std;
 
-
-// wym you life doing the dishes
 int main() {
-///////////////////// Read input1.txt file and create game Board
-// Initialize Variables
-    int columns;
+    // Initialize Variables
+    string playerstatus;
+    char player1char;
+    char player2char;
     int rows;
+    int columns;
+    bool gameOn = true;
 
-    string inputLine;
     
-    cout << "Please enter the number of Rows and Columns in the format '3 8' (e.g., 3 rows and 8 columns): ";
-    if (!(cin >> rows >> columns)) {
-        cerr << "Error: Invalid input format." << endl;
-        return 1;
-    }
- /*   if(inputLine.length() != 3)    { // COME BACK TO THIS LATER FIX DOUBLE DIGIT ROW OR COLUMN
-        cerr << "Error" << endl;
-    }*/
-    // Get Number of Rows and Columns
-    
+    // Open file for the game inputs
+    ifstream gamefile("input1.txt");
 
-
-    if( rows < 2 ) {
-        cerr << "Error: Dots and Boxes requires at least 2 rows." << endl;
+    // Check if the file was successfully opened
+    if (!gamefile) {
+        cerr << "Error: The file cannot be opened." << endl;
         return 1;
     }
 
-    rows = rows * 2 - 1;
-    columns = columns * 2 - 1;
+    // Get the board size from the file
+    gamefile >> rows >> columns;
+
+    if (rows < 2) {
+    cerr << "Error: Dots and Boxes requires at least 2 rows." << endl;
+    return 1;
+    }
+
+    // Adjust grid dimensions
+    int actualRows = rows * 2 - 1;  // Rows with dots and spaces
+    int actualColumns = columns * 2 - 1; // Columns with dots and spaces
+
+
+
+    // Creating the game board dynamically
+    cout << "Create the game board" << endl;
+    Board board(actualRows, actualColumns);
+
+    // Dynamically allocate emptyLocations
+    cout << "Allocating empty memory array" << endl;
+    int** emptyLocations = new int*[emptyCount];
+    for (int i = 0; i < emptyCount; ++i) {
+    emptyLocations[i] = new int[2]; // Assuming 2 columns for row and column indices
+}
     
-    Board board(rows, columns);
-    
+
+    // Assign players
+
+    gamefile >> player1char >> playerstatus >> player2char;
+
+    bool starter = false;
+
+    cout << "Initializing randomplayer pointer" << endl;     
+    RandomPlayer* RPlayer = nullptr;
+    cout << "Initializing strategic player..." << endl;
+    StrategicPlayer* SPlayer = nullptr;
+
+    cout << "Set player status for characters" << endl;
+    if (playerstatus == "Random") {
+        starter = true;
+        RPlayer = new RandomPlayer(player1char);
+        SPlayer = new StrategicPlayer(player2char);
+    } else if (playerstatus == "Strategic") {
+        starter = true;
+        RPlayer = new RandomPlayer(player2char);
+        SPlayer = new StrategicPlayer(player1char);
+    } else {
+        cout << "Can't determine Player. Check input." << endl;
+    }
+
+    // Get empty board location
+    cout << "get empty board location" << endl;
+    int emptyCount = board.GetAllEmptyLineLocations(actualRows, actualColumns, board.getBoard(), emptyLocations);
+
+    // Main game loop
+    cout << "Begin game loop" << endl;
+    if (starter) {
+        while (gameOn) {
+            RPlayer->SelectLineLocation(actualRows, actualColumns, board.getBoard(), emptyLocations, emptyCount, RPlayer->name);
+            break;
+        }
+    }
+
     board.printBoard();
 
-    char Player;
-    string Playstyle;
-    cout << "Please enter your Player Letter and Playstyle in the format 'B Random' (e.g Player B with a Random Playstyle)" << endl;
-    if(!(cin >> Player >> Playstyle) ) {
-        cerr << "Error: INVALID INPUT" << endl;
-        return 1;
-    }
-    if(tolower(Player) == 'x' ) {
-        cerr << "Sorry no player can be player 'X'" << endl;
-    }
+    // Clean up dynamically allocated memory
 
-
-
-
-
-    // Determine wether player has Random Dot Selection or Strategic
-
-    
-
-    // First player to show up goes first 
-
-    // Program selects first/next player 
-    // Player selects a place to add a line. 
-        // (Players can not select unacceptable line locations)
-        // (The Random player should select a random location using rand() )
-    // Program writes the log to the console in the same format that last assignment had (B 1 0) for example
-    // Repeat last three steps
-
-
-    // Finally program draws final board and writes the number of boxes earned by each player.
-
+// After use, ensure to deallocate
+for (int i = 0; i < emptyCount; ++i) {
+    delete[] emptyLocations[i];
+}
+delete[] emptyLocations;
 
     return 0;
 }

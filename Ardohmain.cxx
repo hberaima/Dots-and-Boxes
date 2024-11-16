@@ -17,31 +17,7 @@ public:
     void SelectLineLocation(int actualRows, int actualColumns, char** board, int emptyLocations[][2], int emptyCount, char playername);
 };
 
-class Board {
-public:
-    char** board;  // Pointer to the 2D board
-    int actualRows, actualColumns;
 
-    // Constructor to initialize the board
-    Board(int rows, int columns) {
-        actualRows = rows;
-        actualColumns = columns;
-        board = initialize_board(rows, columns);  // Initialize the board
-    }
-
-    // Destructor to clean up the dynamically allocated memory
-    ~Board() {
-        for (int i = 0; i < actualRows; ++i) {
-            delete[] board[i];  // Free each row
-        }
-        delete[] board;  // Free the board array
-    }
-
-    char** initialize_board(int actualRows, int actualColumns);
-    void print_board(int actualRows, int actualColumns, char** board);
-    int GetAllEmptyLineLocations(int actualRows, int actualColumns, char** board, int emptyLocations[][2]);
-    void PlaceCharacterInRandomEmptySpot(int actualRows, int actualColumns, char** board, int emptyLocations[][2], int emptyCount, char character);
-};
 
 
 int main (){

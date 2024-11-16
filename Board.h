@@ -1,22 +1,26 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <iostream>
+
 class Board {
 public:
-    char** gameBoard;  // Pointer to 2D board array
-    int numRows, numCols;
-
-    // Constructor to initialize the board
+    // Constructor and Destructor
     Board(int rows, int columns);
-
-    // Destructor to clean up dynamically allocated memory
     ~Board();
 
-    // Function to initialize the board with alternating dots and spaces
-    char** initialize_board(int rows, int columns);
+    // Public member functions
+    void printBoard() const;  // Print the board to the console
+    char** getBoard();
+    int GetAllEmptyLineLocations(int actualRows, int actualColumns, char** board, int emptyLocations[][2]);
 
-    // Function to print the board
-    void printBoard() const;
+private:
+    // Private member variables
+    int numRows, numCols;     // Dimensions of the board
+    char** gameBoard;         // Pointer to 2D array representing the board
+
+    // Private helper functions
+    char** initialize_board(int rows, int columns);  // Initialize the board
 };
 
 #endif  // BOARD_H
