@@ -1,25 +1,20 @@
-// Project Name
-// Author Name
-// Date
+#ifndef RANDOMPLAYER_H
+#define RANDOMPLAYER_H
 
-
-#include "Board.h"
-#ifndef HEADER_GUARD
-#define HEADER_GUARD
+#include "Board.h" 
 
 class RandomPlayer {
 public:
-    char name;
-    RandomPlayer();
+    char name;  
+
+    // Constructor to initialize the player's name
+    RandomPlayer(char playerName);
+
+    // Destructor
     ~RandomPlayer();
 
-    // Member functions
-    void selectLineLocation(Board& board, int& r, int & c);
-
-private:
-    // Member variables
-    int points;
-    std::string name;
+    // Function to select a random line location on the board
+    void SelectLineLocation(int actualRows, int actualColumns, char** board, int emptyLocations[][2], int emptyCount, char playername);
 };
 
-#endif // HEADER_GUARD
+#endif  // RANDOMPLAYER_H

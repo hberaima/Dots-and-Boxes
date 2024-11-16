@@ -1,30 +1,22 @@
-// Project Name
-// Author Name
-// Date
-#include <iostream>
-#include <string>
-using namespace std;
-
-#ifndef _BOARD_
-#define _BOARD_
+#ifndef BOARD_H
+#define BOARD_H
 
 class Board {
 public:
+    char** gameBoard;  // Pointer to 2D board array
+    int numRows, numCols;
+
+    // Constructor to initialize the board
     Board(int rows, int columns);
+
+    // Destructor to clean up dynamically allocated memory
     ~Board();
 
-    char& operator()(int row, int col);
-    int GetAllEmptyLineLocations(int* empty_rows, int* empty_cols) const;
-    string determineTurn();
+    // Function to initialize the board with alternating dots and spaces
+    char** initialize_board(int rows, int columns);
+
+    // Function to print the board
     void printBoard() const;
-    char** gameBoard;
-
-private:
-    int numRows;
-    int numCols;
-    string currentPlayer;
-
-    char** createBoard(int rows, int columns);
 };
 
-#endif // _BOARD_
+#endif  // BOARD_H
