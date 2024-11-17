@@ -81,7 +81,7 @@ int main() {
     
     
     Board board = createBoard("input1.txt");
-
+    readInputFile("input1.txt", rows, columns, player1char, player2char, playerstatus);
     // Creating the game board dynamically
     cout << "Create the game board" << endl;
    // Placeholder for the maximum possible number of empty locations
