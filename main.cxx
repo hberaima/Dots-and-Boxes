@@ -91,31 +91,27 @@ int main() {
         int emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
         cout << "done." << endl << endl;
 
-        // Set up players
-        cout << "Setting up Players..." << endl << endl;
+        // Setting up players
         RandomPlayer* RPlayer = nullptr;
         StrategicPlayer* SPlayer = nullptr;
         bool starter = false;
         setupPlayers(playerstatus, player1char, player2char, RPlayer, SPlayer, starter);
-        cout << "done." << endl << endl;
 
-        // Main game loop
-        cout << "Starting the first loop..." << endl << endl;
-        cout<< "Empty Count: "<<emptyCount << endl;
-
+        // Main game loop //////////////////////////////////////////////
+     
+        cout << rows << " " << columns  << endl;
             while (emptyCount != 0) {
                 RPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, RPlayer->name);
                 emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
-               // break; // Placeholder for the game logic
+               
+                SPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, SPlayer->name);
+                emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
             }
-            cout<<emptyCount << endl;
 
-        cout << "done." << endl << endl;
+
 
         // Print final board state
-        cout << "Printing Board" << endl;
         board.printBoard();
-        cout << "done." << endl << endl;
 
         // Clean up dynamically allocated memory
         for (int i = 0; i < boardSize; ++i) {

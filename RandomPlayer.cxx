@@ -20,7 +20,6 @@ void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** 
         return;
     }
 
-    cout << "Selecting Line Location" << endl;
     srand(time(0));
     // Select a random empty spot
     int randomIndex = rand() % emptyCount;  // Get a random index using custom_rand
@@ -32,8 +31,6 @@ void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** 
 
     // Print a move
     std::cout <<playername << " " <<row << " " << col << std::endl;
-
-    cout << "Done Selecting Line Location" << endl;
 
 }
 

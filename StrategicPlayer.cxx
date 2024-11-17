@@ -13,7 +13,28 @@ StrategicPlayer::StrategicPlayer(char playerName) : name(playerName) {
 StrategicPlayer::~StrategicPlayer() { }
 
 // Select a random line location
-void StrategicPlayer::SelectLineLocation(int actualRows, int actualColumns, char** board, int emptyLocations[][2], int emptyCount, char playername) { }
+    void StrategicPlayer::SelectLineLocation(int actualRows, int actualColumns, char** board, int** emptyLocations, int emptyCount, char playername) {
+
+
+      if (emptyCount == 0) {
+        std::cout << "No empty spots available!" << std::endl;
+        return;
+    }
+
+    srand(time(0));
+    // Select a random empty spot
+
+    int randomIndex = rand() % emptyCount;  // Get a random index using custom_rand
+    int row = emptyLocations[randomIndex][0];
+    int col = emptyLocations[randomIndex][1];
+
+    // Place the specified character in the selected spot
+    board[row][col] = tolower(playername);
+
+    // Print a move
+    std::cout <<playername << " " <<row << " " << col % 10<< std::endl;
+    
+} 
 
 int StrategicPlayer::getPoints() {
     return points; 
