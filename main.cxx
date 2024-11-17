@@ -70,59 +70,75 @@ void setupPlayers(const string& playerstatus, char player1char, char player2char
 }
 
 int main() {
-  // Initialize Variables
-        int rows, columns;
-        char player1char, player2char;
-        string playerstatus;
+    // Initialize Variables
 
-        readInputFile("input1.txt", rows, columns, player1char, player2char, playerstatus);         // Read input file
-        Board board = createBoard("input1.txt"); // Create the game board
+    string playerstatus;
+    char player1char;
+    char player2char;
+    int rows;
+    int columns;
+    bool gameOn = true;
+    
+    
+    Board board = createBoard("input1.txt");
 
-        // Initialize empty locations
+    // Creating the game board dynamically
+    cout << "Create the game board" << endl;
+   // Placeholder for the maximum possible number of empty locations
 
-        int boardSize = board.getRows() * board.getColumns(); // number of maximum locations for board
+    int maxEmptyLocations = board.getRows() * board.getColumns();
 
-        int** emptyLocations = new int*[boardSize];
-        for (int i = 0; i < boardSize; ++i) {
-            emptyLocations[i] = new int[2];
+    // Dynamically allocate `emptyLocations`
+    int** emptyLocations = new int*[maxEmptyLocations];
+    for (int i = 0; i < maxEmptyLocations; ++i) {
+    emptyLocations[i] = new int[2];
+    }
+
+    // Get all empty line locations
+    int emptyCount = board.Board::GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
+
+    bool starter = false;
+
+    cout << "Initializing randomplayer pointer" << endl;     
+    RandomPlayer* RPlayer = nullptr;
+    cout << "Initializing strategic player..." << endl;
+    StrategicPlayer* SPlayer = nullptr;
+
+    cout << "Set player status for characters" << endl;
+    if (playerstatus == "Random") {
+        starter = true;
+        RPlayer = new RandomPlayer(player1char);
+        SPlayer = new StrategicPlayer(player2char);
+    } else if (playerstatus == "Strategic") {
+        starter = true;
+        RPlayer = new RandomPlayer(player2char);
+        SPlayer = new StrategicPlayer(player1char);
+    } else {
+        cout << "Can't determine Player. Check input." << endl;
+    }
+
+    // Get empty board location
+    cout << "get empty board location" << endl;
+    emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
+
+    // Main game loop
+    cout << "Begin game loop" << endl;
+    if (starter) {
+        while (gameOn) {
+            RPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, RPlayer->name);
+            break;
         }
+    }
 
-        // Get all empty line locations
-        int emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
-        cout << "done." << endl << endl;
+    board.printBoard();
 
-        // Setting up players
-        RandomPlayer* RPlayer = nullptr;
-        StrategicPlayer* SPlayer = nullptr;
-        bool starter = false;
-        setupPlayers(playerstatus, player1char, player2char, RPlayer, SPlayer, starter);
+    // Clean up dynamically allocated memory
 
-        // Main game loop //////////////////////////////////////////////
-     
-        cout << rows << " " << columns  << endl;
-            while (emptyCount != 0) {
-                RPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, RPlayer->name);
-                emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
-               
-                SPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, SPlayer->name);
-                emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
-            }
+// After use, ensure to deallocate
+for (int i = 0; i < emptyCount; ++i) {
+    delete[] emptyLocations[i];
+}
+delete[] emptyLocations;
 
-
-
-        // Print final board state
-        board.printBoard();
-        
-        //print 
-
-
-        // Clean up dynamically allocated memory
-        for (int i = 0; i < boardSize; ++i) {
-            delete[] emptyLocations[i];
-        }
-        delete[] emptyLocations;
-        delete RPlayer;
-        delete SPlayer;
-        return 0;
-
+    return 0;
 }
