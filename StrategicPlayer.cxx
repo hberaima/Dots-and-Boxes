@@ -17,7 +17,7 @@ StrategicPlayer::~StrategicPlayer() { }
 
 
       if (emptyCount == 0) {
-        std::cout << "No empty spots available!" << std::endl;
+        std::cout << "END" << std::endl;
         return;
     }
 

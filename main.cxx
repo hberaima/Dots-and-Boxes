@@ -112,6 +112,9 @@ int main() {
 
         // Print final board state
         board.printBoard();
+        
+        //print 
+
 
         // Clean up dynamically allocated memory
         for (int i = 0; i < boardSize; ++i) {
