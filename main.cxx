@@ -70,75 +70,86 @@ void setupPlayers(const string& playerstatus, char player1char, char player2char
 }
 
 int main() {
-    // Initialize Variables
+  // Initialize Variables
 
-    string playerstatus;
-    char player1char;
-    char player2char;
-    int rows;
-    int columns;
-    bool gameOn = true;
-    
-    
-    Board board = createBoard("input1.txt");
-    readInputFile("input1.txt", rows, columns, player1char, player2char, playerstatus);
-    // Creating the game board dynamically
-    cout << "Create the game board" << endl;
-   // Placeholder for the maximum possible number of empty locations
+        int rows, columns;
+        char player1char, player2char;
+        string playerstatus;
 
-    int maxEmptyLocations = board.getRows() * board.getColumns();
+        readInputFile("input1.txt", rows, columns, player1char, player2char, playerstatus);         // Read input file
+        Board board = createBoard("input1.txt"); // Create the game board
 
-    // Dynamically allocate `emptyLocations`
-    int** emptyLocations = new int*[maxEmptyLocations];
-    for (int i = 0; i < maxEmptyLocations; ++i) {
-    emptyLocations[i] = new int[2];
-    }
+        // Initialize empty locations
 
-    // Get all empty line locations
-    int emptyCount = board.Board::GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
+        int boardSize = board.getRows() * board.getColumns(); // number of maximum locations for board
 
-    bool starter = false;
-
-    cout << "Initializing randomplayer pointer" << endl;     
-    RandomPlayer* RPlayer = nullptr;
-    cout << "Initializing strategic player..." << endl;
-    StrategicPlayer* SPlayer = nullptr;
-
-    cout << "Set player status for characters" << endl;
-    if (playerstatus == "Random") {
-        starter = true;
-        RPlayer = new RandomPlayer(player1char);
-        SPlayer = new StrategicPlayer(player2char);
-    } else if (playerstatus == "Strategic") {
-        starter = true;
-        RPlayer = new RandomPlayer(player2char);
-        SPlayer = new StrategicPlayer(player1char);
-    } else {
-        cout << "Can't determine Player. Check input." << endl;
-    }
-
-    // Get empty board location
-    cout << "get empty board location" << endl;
-    emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
-
-    // Main game loop
-    cout << "Begin game loop" << endl;
-    if (starter) {
-        while (gameOn) {
-            RPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, RPlayer->name);
-            break;
+        int** emptyLocations = new int*[boardSize];
+        for (int i = 0; i < boardSize; ++i) {
+            emptyLocations[i] = new int[2];
         }
-    }
 
-    board.printBoard();
+        // Get all empty line locations
+        int emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
 
-    // Clean up dynamically allocated memory
+        // Setting up players
+        RandomPlayer* RPlayer = nullptr;
+        StrategicPlayer* SPlayer = nullptr;
+        bool starter = false;
+        setupPlayers(playerstatus, player1char, player2char, RPlayer, SPlayer, starter);
 
-// After use, ensure to deallocate
-for (int i = 0; i < emptyCount; ++i) {
-    delete[] emptyLocations[i];
-}
-delete[] emptyLocations;
+        // Main game loop //////////////////////////////////////////////
+        cout << rows << " " << columns  << endl;
+            while (emptyCount != 0) {
+                RPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, RPlayer->name);
+                emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
+                RPlayer->checkForBoxRandom(board.getBoard(), RPlayer->Rrow_move, RPlayer->Rcol_move, RPlayer->name, board.getRows(), board.getColumns(), RPlayer);
+               
+                SPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, SPlayer->name);
+                emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
+                SPlayer->checkForBoxStrategic(board.getBoard(), SPlayer->Srow_move, SPlayer->Scol_move, SPlayer->name, board.getRows(), board.getColumns(), SPlayer);
+            }
 
-    return 0;
+        // Print final board state
+        std::cout << "END" <<std::endl<<std::endl;
+        board.printBoard();
+        std::cout << std::endl<<std::endl;
+        // Sort players and determine winner
+
+        if(SPlayer->boxes > RPlayer->boxes){
+            if (SPlayer->name > RPlayer->name){
+            std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes<<"."<< std::endl;
+            std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes << " (win)."<< std::endl;
+            }else{
+                std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes << " (win)."<< std::endl;
+                std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes<<"."<< std::endl;
+            }
+        }else if(SPlayer->boxes < RPlayer->boxes) {
+            if (SPlayer->name > RPlayer->name){
+            std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes << " (win)."<< std::endl;
+            std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes<<"."<< std::endl;
+            }else{
+                std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes<<"."<< std::endl;
+                std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes << " (win)."<< std::endl;
+            }
+        }else{
+            if (SPlayer->name > RPlayer->name){
+            std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes << " (tie)."<< std::endl;
+            std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes << " (tie)."<< std::endl;
+            }else{
+                std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes << " (tie)."<< std::endl;
+                std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes << " (tie)."<< std::endl;
+        }
+
+        
+
+
+        // Clean up dynamically allocated memory
+        for (int i = 0; i < boardSize; ++i) {
+            delete[] emptyLocations[i];
+        }
+        delete[] emptyLocations;
+        delete RPlayer;
+        delete SPlayer;
+        return 0;
+        }
 }

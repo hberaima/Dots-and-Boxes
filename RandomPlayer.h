@@ -7,6 +7,8 @@ class RandomPlayer {
 public:
     char name;  
     int boxes;
+    int Rrow_move=0;
+    int Rcol_move=0;
     // Constructor to initialize the player's name
     RandomPlayer(char playerName);
 
