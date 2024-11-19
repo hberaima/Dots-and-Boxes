@@ -38,7 +38,7 @@ char** Board::initialize_board(int rows, int columns) {
 // Function to print the board with row and column indices
 void Board::printBoard() const {
     // Print the X-axis tens indices
-    std::cout << "    ";  // Leading space for alignment
+    std::cout << "   ";  // Leading space for alignment
     for (int col = 0; col < numCols; ++col) {
         if (col % 10 == 0) {
             std::cout << col / 10;  // Print tens place for column numbers
@@ -49,7 +49,7 @@ void Board::printBoard() const {
     std::cout << std::endl;
 
     // Print the X-axis ones indices
-    std::cout << "    ";  // Leading space for alignment
+    std::cout << "   ";  // Leading space for alignment
     for (int col = 0; col < numCols; ++col) {
         std::cout << col % 10;  // Print ones place for column numbers
     }

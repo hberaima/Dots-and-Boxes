@@ -1,3 +1,19 @@
+//----------------------------------------------------------------------------------
+// Name: Bakar Dia & Hamid Beraima
+// Email: bxd6470@psu.edu & hab5491@psu.edu
+// Class: CMPSC 330
+// Program 1
+// Due Date:  19, 2024
+//
+// Description: This program reads an integer input from the user n then
+// iterates and prints all Kaprekar Numbers >= n
+//
+//
+// 1. As inspiration, We used a minimax algorithm from the following source to develop our Strategic Player Function:
+// https://www.geeksforgeeks.org/finding-optimal-move-in-tic-tac-toe-using-minimax-algorithm-in-game-theory/
+//
+//-------------------------------------------------------------------------------------
+
 #include "Board.h"
 #include "RandomPlayer.h"
 #include "StrategicPlayer.h"
@@ -6,7 +22,6 @@
 #include <string>
 using namespace std;
 
-// g++ -ansi -pedantic -std=c++14 -Wall main.cxx Board.cxx RandomPlayer.cxx StrategicPlayer.cxx -o main
 
 Board createBoard(string fileName) {
     int rows, columns;
