@@ -30,7 +30,6 @@ Board createBoard(string fileName) {
     Board board(actualRows, actualColumns);
     return board;
 }
-
 void readInputFile(const string& fileName, int& rows, int& columns, char& player1Char, char &player2Char, string& playerStatus) {
     ifstream gameFile(fileName);
 
@@ -39,20 +38,18 @@ void readInputFile(const string& fileName, int& rows, int& columns, char& player
         throw runtime_error("Failed to open the file" + fileName);
     }
 
-    gameFile >> rows >> columns;
+    cin >> rows >> columns;
     if (rows < 2 || columns < 2) {
         cerr << "Error: Dots and Boxes requires at least 2 rows and 2 columns." << endl;
         throw runtime_error("Invalid board dimensions in the file.");
     }
 
-    gameFile >> player1Char >> playerStatus >> player2Char;
+    cin >> player1Char >> playerStatus >> player2Char;
 
-        if (gameFile.fail()) {
-        cerr << "Error: Invalid player data in the input file." << endl;
-        throw runtime_error("Failed to read player data from the file.");
+       
     }
 
-}
+
 
 void setupPlayers(const string& playerstatus, char player1char, char player2char, RandomPlayer*& RPlayer, StrategicPlayer*& SPlayer, bool& starter) {
     if (playerstatus == "Random") {
