@@ -16,11 +16,15 @@ public:
     ~StrategicPlayer();
 
     // Function to select a random line location on the board
-    void SelectLineLocation(int actualRows, int actualColumns, char** board, int** emptyLocations, int emptyCount, char playername);
+    void SelectLineLocation(Board board, int& r, int& c, StrategicPlayer* sPlayer);
 
     // function to count points/check for boxes
-    bool checkForBoxStrategic(char** board, int x, int y, char player, int rows, int columns, StrategicPlayer* StrategicPlayer);
-    
+    bool checkForBoxStrategic(Board board, int x, int y, StrategicPlayer* sPlayer);
+    int evaluateBoard(Board board, int emptyCount, int** emptyLocations, StrategicPlayer* sPlayer);
+    int minimax(Board& board, int depth, bool isMaximizing, int alpha, int beta, StrategicPlayer* sPlayer);
+    void setLine(char** board, int row, int col);
+    int getBoxes();
+
     int getPoints();
 
 private:

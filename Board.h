@@ -15,6 +15,8 @@ public:
     int GetAllEmptyLineLocations(int actualRows, int actualColumns, char** board, int** emptyLocations);
     int getRows();
     int getColumns();
+    void setLine(int row, int col, char input);
+
 private:
     // Private member variables
     int numRows, numCols;     // Dimensions of the board

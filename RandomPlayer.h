@@ -19,7 +19,7 @@ public:
     void SelectLineLocation(int actualRows, int actualColumns, char** board, int** emptyLocations, int emptyCount, char playername);
 
     int getPoints();
-
+    int getBoxes();
     // function to count points/check for boxes
     bool checkForBoxRandom(char** board, int x, int y, char player, int rows, int columns, RandomPlayer* randomPlayer);
 

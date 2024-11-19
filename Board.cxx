@@ -92,6 +92,10 @@ int Board::GetAllEmptyLineLocations(int actualRows, int actualColumns, char** bo
     return count;  // Return the number of empty spots
 }
 
+void Board::setLine(int row, int col, char input) {
+    gameBoard[row][col] = tolower(input);
+}
+
 char** Board::getBoard() { return gameBoard;}
 int Board::getRows() { return numRows;}
 int Board::getColumns() {return numCols;}
