@@ -37,7 +37,7 @@ char** Board::initialize_board(int rows, int columns) {
 
 // Function to print the board with row and column indices
 void Board::printBoard() const {
-    std::cout << "   ";  // Leading space for row numbers
+    std::cout << "  ";  // Leading space for row numbers
         for (int col = 0; col < numCols; ++col) {
             if (col % 10 == 0) {
                 std::cout << col / 10;  // Print tens place for column numbers
@@ -48,7 +48,7 @@ void Board::printBoard() const {
         std::cout << std::flush;
         std::cout << std::endl;
 
-    cout << "   ";
+    cout << "  ";
     for (int j = 0; j < numCols; ++j) {
         cout << j % 10;  // Print column indices
     }
@@ -90,10 +90,6 @@ int Board::GetAllEmptyLineLocations(int actualRows, int actualColumns, char** bo
     }
 
     return count;  // Return the number of empty spots
-}
-
-void Board::setLine(int row, int col, char input) {
-    gameBoard[row][col] = tolower(input);
 }
 
 char** Board::getBoard() { return gameBoard;}

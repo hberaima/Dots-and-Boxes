@@ -15,20 +15,25 @@ public:
     // Destructor
     ~StrategicPlayer();
 
+    //Function to copy main board
+    void copyBoard(char **source, char **destination, int rows, int columns);
+
+    // fuction to evaluate potential next move
+    int evaluateMove(char **board, int rows, int columns, int depth, char player, int **emptyLocations, int emptyCount);
+
     // Function to select a random line location on the board
-    void SelectLineLocation(Board board, int& r, int& c, StrategicPlayer* sPlayer);
+    void SelectLineLocation(int actualRows, int actualColumns, char** board, int** emptyLocations, int emptyCount, char playername);
+
+    //function to count boxes
+    int countBoxes(char **board, int rows, int columns, char player);
 
     // function to count points/check for boxes
-    bool checkForBoxStrategic(Board board, int x, int y, StrategicPlayer* sPlayer);
-    int evaluateBoard(Board board, int emptyCount, int** emptyLocations, StrategicPlayer* sPlayer);
-    int minimax(Board& board, int depth, bool isMaximizing, int alpha, int beta, StrategicPlayer* sPlayer);
-    void setLine(char** board, int row, int col);
-    int getBoxes();
-
+    bool checkForBoxStrategic(char** board, int x, int y, char player, int rows, int columns, StrategicPlayer* StrategicPlayer);
+    
     int getPoints();
 
 private:
-    int points;
+
 };
 
 #endif  // StrategicPlayer_H

@@ -7,7 +7,7 @@ using namespace std;
 
 
 // Constructor: Initializes the player's name
-RandomPlayer::RandomPlayer(char playerName) : name(playerName), points(0) {
+RandomPlayer::RandomPlayer(char playerName) : name(playerName) , boxes(0) {
 
 }
 
@@ -17,6 +17,10 @@ RandomPlayer::~RandomPlayer() {
 
 // Select a random line location
 void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** board, int** emptyLocations, int emptyCount, char playername) {
+      if (emptyCount == 0) {
+        std::cout << "No empty spots available!" << std::endl;
+        return;
+    }
     srand(time(nullptr));
     // Select a random empty spot
     int randomIndex = rand() % emptyCount;  // Get a random index using custom_rand
@@ -28,6 +32,8 @@ void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** 
 
     // Print a move
     std::cout <<playername << " " <<Rrow_move << " " << Rcol_move << std::endl;
+
+
 }
 
 //function to check for boxes/ count point
@@ -83,8 +89,3 @@ void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** 
         return boxCompleted;
     }
 
-
-int RandomPlayer::getPoints() {
-    return points;
-}
-int RandomPlayer::getBoxes() {return boxes;}

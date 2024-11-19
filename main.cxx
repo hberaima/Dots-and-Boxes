@@ -98,16 +98,15 @@ int main() {
         setupPlayers(playerstatus, player1char, player2char, RPlayer, SPlayer, starter);
 
         // Main game loop //////////////////////////////////////////////
-        cout << "Starting game loop: " << endl;
         cout << rows << " " << columns  << endl;
             while (emptyCount != 0) {
                 RPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, RPlayer->name);
                 emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
                 RPlayer->checkForBoxRandom(board.getBoard(), RPlayer->Rrow_move, RPlayer->Rcol_move, RPlayer->name, board.getRows(), board.getColumns(), RPlayer);
                
-                SPlayer->SelectLineLocation(board, rows, columns, SPlayer);
+                SPlayer->SelectLineLocation(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations, emptyCount, SPlayer->name);
                 emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
-
+                SPlayer->checkForBoxStrategic(board.getBoard(), SPlayer->Srow_move, SPlayer->Scol_move, SPlayer->name, board.getRows(), board.getColumns(), SPlayer);
             }
 
         // Print final board state
@@ -118,29 +117,31 @@ int main() {
 
         if(SPlayer->boxes > RPlayer->boxes){
             if (SPlayer->name > RPlayer->name){
-            std::cout << "Player " << RPlayer->name << " has " << RPlayer->getBoxes() <<"."<< std::endl;
-            std::cout << "Player " << SPlayer->name << " has " << SPlayer->getBoxes()  << " (win)."<< std::endl;
+            std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes<<"."<< std::endl;
+            std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes << " (win)."<< std::endl;
             }else{
-                std::cout << "Player " << SPlayer->name << " has " << SPlayer->getBoxes()  << " (win)."<< std::endl;
-                std::cout << "Player " << RPlayer->name << " has " << RPlayer->getBoxes() <<"."<< std::endl;
+                std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes << " (win)."<< std::endl;
+                std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes<<"."<< std::endl;
             }
         }else if(SPlayer->boxes < RPlayer->boxes) {
             if (SPlayer->name > RPlayer->name){
-            std::cout << "Player " << RPlayer->name << " has " << RPlayer->getBoxes()  << " (win)."<< std::endl;
-            std::cout << "Player " << SPlayer->name << " has " << SPlayer->getBoxes() <<"."<< std::endl;
+            std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes << " (win)."<< std::endl;
+            std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes<<"."<< std::endl;
             }else{
-                std::cout << "Player " << SPlayer->name << " has " << SPlayer->getBoxes() <<"."<< std::endl;
-                std::cout << "Player " << RPlayer->name << " has " << RPlayer->getBoxes()  << " (win)."<< std::endl;
+                std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes<<"."<< std::endl;
+                std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes << " (win)."<< std::endl;
             }
         }else{
             if (SPlayer->name > RPlayer->name){
-            std::cout << "Player " << RPlayer->name << " has " << RPlayer->boxes << " (tie)."<< std::endl;
-            std::cout << "Player " << SPlayer->name << " has " << SPlayer->boxes << " (tie)."<< std::endl;
-            }
-            else{
-                std::cout << "Player " << SPlayer->name << " has " << SPlayer->boxes << " (tie)."<< std::endl;
-                std::cout << "Player " << RPlayer->name << " has " << RPlayer->boxes << " (tie)."<< std::endl;
+            std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes << " (tie)."<< std::endl;
+            std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes << " (tie)."<< std::endl;
+            }else{
+                std::cout << "Player " << SPlayer->name << " has " << SPlayer -> boxes << " (tie)."<< std::endl;
+                std::cout << "Player " << RPlayer->name << " has " << RPlayer -> boxes << " (tie)."<< std::endl;
         }
+
+        
+
 
         // Clean up dynamically allocated memory
         for (int i = 0; i < boardSize; ++i) {

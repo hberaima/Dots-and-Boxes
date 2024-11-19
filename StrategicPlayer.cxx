@@ -1,237 +1,195 @@
 #include "StrategicPlayer.h"
-#include "Board.h"
 #include <iostream>
-#include <cstdlib>  // For rand()
-#include <ctime>    // For seeding random numbers
-#include <limits>
+#include <cstdlib>
+#include <ctime>
+#include <cctype>
+#include <climits>
+#include <algorithm>
+
 using namespace std;
 
-// Constructor: Initializes the player's name
-StrategicPlayer::StrategicPlayer(char playerName) : name(playerName) {}
+// Constructor
+StrategicPlayer::StrategicPlayer(char playerName) : name(playerName), boxes(0), Srow_move(-1), Scol_move(-1) {}
 
-// Destructor: Clean up (empty as no dynamic memory is used)
-StrategicPlayer::~StrategicPlayer() { }
+// Destructor
+StrategicPlayer::~StrategicPlayer() {}
 
-int StrategicPlayer::evaluateBoard(Board board, int emptyCount, int** emptyLocations, StrategicPlayer* sPlayer) {
-    int score = 0;
+// Copy the board state
+void StrategicPlayer::copyBoard(char** source, char** destination, int rows, int columns) {
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < columns; ++j) {
+            destination[i][j] = source[i][j];
+        }
+    }
+}
 
+// Evaluate a move recursively using minimax algorithm
+int StrategicPlayer::evaluateMove(char** board, int rows, int columns, int depth, char player, int** emptyLocations, int emptyCount) {
+
+    // Base case: reached maximum depth or no moves left
+    if (depth == 0 || emptyCount == 0) {
+        return countBoxes(board, rows, columns, player);
+    }
+
+    int bestScore = (player == name) ? INT_MIN : INT_MAX;
+    char opponent = (player == 'B') ? 'R' : 'B';
+
+    // Try each possible move
+    for (int i = 0; i < emptyCount; ++i) {
+        int row = emptyLocations[i][0];
+        int col = emptyLocations[i][1];
+        
+        // Skip invalid moves
+        if (board[row][col] != ' ') continue;
+
+        // Make move
+        board[row][col] = tolower(player);
+        int boxesBefore = boxes;
+        bool completedBox = checkForBoxStrategic(board, row, col, player, rows, columns, this);
+        
+        // Create new empty locations array excluding current move
+        int** newEmptyLocations = new int*[emptyCount - 1];
+        int newIndex = 0;
+        for (int j = 0; j < emptyCount; ++j) {
+            if (j != i) {
+                newEmptyLocations[newIndex] = new int[2];
+                newEmptyLocations[newIndex][0] = emptyLocations[j][0];
+                newEmptyLocations[newIndex][1] = emptyLocations[j][1];
+                newIndex++;
+            }
+        }
+
+        // If box was completed, player gets another turn
+        int score;
+        if (completedBox) {
+            score = evaluateMove(board, rows, columns, depth - 1, player, newEmptyLocations, emptyCount - 1);
+        } else {
+            score = evaluateMove(board, rows, columns, depth - 1, opponent, newEmptyLocations, emptyCount - 1);
+        }
+
+        // Cleanup
+        for (int j = 0; j < emptyCount - 1; ++j) {
+            delete[] newEmptyLocations[j];
+        }
+        delete[] newEmptyLocations;
+
+        // Undo move
+        board[row][col] = ' ';
+        boxes = boxesBefore;
+
+        // Update best score
+        if (player == name) {
+            bestScore = max(bestScore, score);
+        } else {
+            bestScore = min(bestScore, score);
+        }
+    }
+
+    return bestScore;
+}
+
+// Select best move using minimax evaluation
+void StrategicPlayer::SelectLineLocation(int actualRows, int actualColumns, char** board, int** emptyLocations, int emptyCount, char playerName) {
+    if (emptyCount == 0) return;
+
+    int bestScore = INT_MIN;
+    Srow_move = emptyLocations[0][0];
+    Scol_move = emptyLocations[0][1];
+
+    // Try each possible move
     for (int i = 0; i < emptyCount; ++i) {
         int row = emptyLocations[i][0];
         int col = emptyLocations[i][1];
 
-        if (row < 0 || row >= board.getRows() || col < 0 || col >= board.getColumns()) {
-            continue; // Skip invalid indices
-        }
+        // Skip invalid moves
+        if (board[row][col] != ' ') continue;
 
-        Board tempBoard = board; // Use copy constructor
-        tempBoard.setLine(row, col, sPlayer->name);
-
-        if (checkForBoxStrategic(tempBoard, row, col, sPlayer)) {
-            score += 10;
-        }
-    }
-
-    return score;
-}
-
-
-int StrategicPlayer::minimax(Board& board, int depth, bool isMaximizing, int alpha, int beta, StrategicPlayer* sPlayer) {
-    static int minimaxCalls = 0;
-    int currentCall = ++minimaxCalls;
-    
-    std::cout << "Minimax call #" << currentCall << " (depth: " << depth << ", " 
-              << (isMaximizing ? "maximizing" : "minimizing") << ")" << std::endl;
-
-    int maxEmptyLocations = board.getRows() * board.getColumns();
-    std::cout << "Minimax #" << currentCall << ": Allocating memory for " << maxEmptyLocations << " locations" << std::endl;
-
-    // Dynamically allocate `emptyLocations`
-    int** emptyLocations = new int*[maxEmptyLocations];
-    for (int i = 0; i < maxEmptyLocations; ++i) {
-        emptyLocations[i] = new int[2];
-    }
-
-    // Get all empty locations
-    int emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
-    std::cout << "Minimax #" << currentCall << ": Found " << emptyCount << " empty locations" << std::endl;
-
-    // Base case: No moves left or max depth reached
-    if (emptyCount == 0 || depth == 0) {
-        std::cout << "Minimax #" << currentCall << ": Reached base case" << std::endl;
-        int evaluation = evaluateBoard(board, emptyCount, emptyLocations, sPlayer);
+        // Make move
+        board[row][col] = tolower(playerName);
+        int boxesBefore = boxes;
         
-        // Clean up before return
-        std::cout << "Minimax #" << currentCall << ": Cleaning up memory before base case return" << std::endl;
-        for (int i = 0; i < maxEmptyLocations; ++i) {
-            delete[] emptyLocations[i];
-        }
-        delete[] emptyLocations;
-        
-        return evaluation;
-    }
-
-    int bestScore = isMaximizing ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
-
-    for (int i = 0; i < emptyCount; ++i) {
-        int r = emptyLocations[i][0];
-        int c = emptyLocations[i][1];
-
-        std::cout << "Minimax #" << currentCall << ": Testing move at (" << r << ", " << c << ")" << std::endl;
-        
-        // Make a move
-        board.setLine(r, c, isMaximizing ? 'S' : 'R');
-
-        // Recursive call
-        int score = minimax(board, depth - 1, !isMaximizing, alpha, beta, sPlayer);
-        std::cout << "Minimax #" << currentCall << ": Move (" << r << ", " << c << ") scored: " << score << std::endl;
+        // Evaluate position
+        int score = evaluateMove(board, actualRows, actualColumns, 2, playerName, emptyLocations, emptyCount);
 
         // Undo move
-        board.setLine(r, c, ' ');
+        board[row][col] = ' ';
+        boxes = boxesBefore;
 
-        // Update best score
-        if (isMaximizing) {
-            if (score > bestScore) {
-                bestScore = score;
-                std::cout << "Minimax #" << currentCall << ": New best max score: " << bestScore << std::endl;
-            }
-            if (bestScore > alpha) {
-                alpha = bestScore;
-            }
-        } else {
-            if (score < bestScore) {
-                bestScore = score;
-                std::cout << "Minimax #" << currentCall << ": New best min score: " << bestScore << std::endl;
-            }
-            if (bestScore < beta) {
-                beta = bestScore;
-            }
-        }
-
-        // Alpha-beta pruning
-        if (beta <= alpha) {
-            std::cout << "Minimax #" << currentCall << ": Pruning at alpha=" << alpha << ", beta=" << beta << std::endl;
-            break;
+        // Update best move
+        if (score > bestScore) {
+            bestScore = score;
+            Srow_move = row;
+            Scol_move = col;
         }
     }
 
-    // Clean up
-    std::cout << "Minimax #" << currentCall << ": Cleaning up memory before return" << std::endl;
-    for (int i = 0; i < maxEmptyLocations; ++i) {
-        delete[] emptyLocations[i];
-    }
-    delete[] emptyLocations;
-
-    std::cout << "Minimax #" << currentCall << ": Returning score " << bestScore << std::endl;
-    return bestScore;
+    // Make the best move
+    board[Srow_move][Scol_move] = tolower(playerName);
+    cout << playerName << " " << Srow_move << " " << Scol_move << endl;
 }
 
-void StrategicPlayer::SelectLineLocation(Board board, int& r, int& c, StrategicPlayer* sPlayer) {
-    int maxEmptyLocations = board.getRows() * board.getColumns();
-    int** emptyLocations = new int*[maxEmptyLocations];
-    for (int i = 0; i < maxEmptyLocations; ++i) {
-        emptyLocations[i] = new int[2];
-    }
-
-    int emptyCount = board.GetAllEmptyLineLocations(board.getRows(), board.getColumns(), board.getBoard(), emptyLocations);
-
-     // Safety check to prevent out-of-bounds access
-    if (emptyCount == 0) {
-        r = -1;
-        c = -1;
-        
-        // Clean up memory
-        for (int i = 0; i < maxEmptyLocations; ++i) {
-            delete[] emptyLocations[i];
-        }
-        delete[] emptyLocations;
-        
-        return;
-    }
-
-    int bestScore = std::numeric_limits<int>::min();
-
-    for (int i = 0; i < emptyCount; ++i) {
-        int currentRow = emptyLocations[i][0];
-        int currentCol = emptyLocations[i][1];
-
-        board.setLine(currentRow, currentCol, name);
-
-        int moveScore = minimax(board, 3, false, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), sPlayer);
-
-        board.setLine(currentRow, currentCol, ' ');
-
-        if (moveScore > bestScore) {
-            bestScore = moveScore;
-            r = currentRow;
-            c = currentCol;
+// Count boxes owned by player
+int StrategicPlayer::countBoxes(char** board, int rows, int columns, char player) {
+    int count = 0;
+    for (int i = 1; i < rows; i += 2) {
+        for (int j = 1; j < columns; j += 2) {
+            if (board[i][j] == toupper(player)) {
+                count++;
+            }
         }
     }
-
-    for (int i = 0; i < maxEmptyLocations; ++i) {
-        delete[] emptyLocations[i];
-    }
-    delete[] emptyLocations;
+    return count;
 }
 
-bool StrategicPlayer::checkForBoxStrategic(Board board, int x, int y, StrategicPlayer* sPlayer) {
-    if (x < 0 || x >= board.getRows() || y < 0 || y >= board.getColumns()) {
-        return false;
-    }
+// Check for completed boxes
+bool StrategicPlayer::checkForBoxStrategic(char** board, int x, int y, char player, int rows, int columns, StrategicPlayer* StrategicPlayer) {
+        bool boxCompleted = false;
 
-    // Only check for box completion on horizontal or vertical lines
-    if (!(x % 2 == 0 && y % 2 == 1) && !(y % 2 == 0 && x % 2 == 1)) {
-        return false;
+        // Horizontal line case (top or bottom of the box)
+        if (x % 2 == 0 && y % 2 == 1) {
+            // Check above for a box
+            if (x > 0 &&
+                board[x - 1][y - 1] != ' ' &&  // Left vertical line
+                board[x - 1][y + 1] != ' ' &&  // Right vertical line
+                board[x - 2][y] != ' ') {      // Top horizontal line
+                // Top box is completed
+                board[x - 1][y] = toupper(player);  // Mark the box with the uppercase player symbol
+                StrategicPlayer->boxes++;
+                boxCompleted = true;
+            }
+            // Check below for a box
+            if (x < rows - 1 &&
+                board[x + 1][y - 1] != ' ' &&  // Left vertical line
+                board[x + 1][y + 1] != ' ' &&  // Right vertical line
+                board[x + 2][y] != ' ') {      // Bottom horizontal line
+                // Bottom box is completed
+                board[x + 1][y] = toupper(player);  // Mark the box with the uppercase player symbol
+                StrategicPlayer->boxes++;
+                boxCompleted = true;
+            }
+        }
+        // Vertical line case (left or right of the box)
+        else if (y % 2 == 0 && x % 2 == 1) {
+            // Check to the left for a box
+            if (y > 0 &&
+                board[x - 1][y - 1] != ' ' &&  // Top horizontal line
+                board[x + 1][y - 1] != ' ' &&  // Bottom horizontal line
+                board[x][y - 2] != ' ') {      // Left vertical line
+                // Left box is completed
+                board[x][y - 1] = toupper(player);  // Mark the box with the uppercase player symbol
+                StrategicPlayer->boxes++;
+                boxCompleted = true;
+            }
+            // Check to the right for a box
+            if (y < columns - 1 &&
+                board[x - 1][y + 1] != ' ' &&  // Top horizontal line
+                board[x + 1][y + 1] != ' ' &&  // Bottom horizontal line
+                board[x][y + 2] != ' ') {      // Right vertical line
+                // Right box is completed
+                board[x][y + 1] = toupper(player);  // Mark the box with the uppercase player symbol
+                StrategicPlayer->boxes++;
+                boxCompleted = true;
+            }
+        }
+        return boxCompleted;
     }
-
-    bool boxCompleted = false;
-    char** gameBoard = board.getBoard();
-
-    // Horizontal line case
-    if (x % 2 == 0 && y % 2 == 1) {
-        // Check above for a box
-        if (x > 1 && y > 0 && y < board.getColumns() - 1 &&
-            gameBoard[x - 1][y - 1] != ' ' &&  // Left vertical line
-            gameBoard[x - 1][y + 1] != ' ' &&  // Right vertical line
-            gameBoard[x - 2][y] != ' ') {      // Top horizontal line
-            gameBoard[x - 1][y] = toupper(sPlayer->name);
-            sPlayer->boxes++;
-            boxCompleted = true;
-        }
-        
-        // Check below for a box
-        if (x < board.getRows() - 2 && y > 0 && y < board.getColumns() - 1 &&
-            gameBoard[x + 1][y - 1] != ' ' &&  // Left vertical line
-            gameBoard[x + 1][y + 1] != ' ' &&  // Right vertical line
-            gameBoard[x + 2][y] != ' ') {      // Bottom horizontal line
-            gameBoard[x + 1][y] = toupper(sPlayer->name);
-            sPlayer->boxes++;
-            boxCompleted = true;
-        }
-    }
-    // Vertical line case (left or right of the box)
-    else if (y % 2 == 0 && x % 2 == 1) {
-        // Check to the left for a box
-        if (y > 1 && x > 0 && x < board.getRows() - 1 &&
-            gameBoard[x - 1][y - 1] != ' ' &&  // Top horizontal line
-            gameBoard[x + 1][y - 1] != ' ' &&  // Bottom horizontal line
-            gameBoard[x][y - 2] != ' ') {      // Left vertical line
-            gameBoard[x][y - 1] = toupper(sPlayer->name);
-            sPlayer->boxes++;
-            boxCompleted = true;
-        }
-        
-        // Check to the right for a box
-        if (y < board.getColumns() - 2 && x > 0 && x < board.getRows() - 1 &&
-            gameBoard[x - 1][y + 1] != ' ' &&  // Top horizontal line
-            gameBoard[x + 1][y + 1] != ' ' &&  // Bottom horizontal line
-            gameBoard[x][y + 2] != ' ') {      // Right vertical line
-            gameBoard[x][y + 1] = toupper(sPlayer->name);
-            sPlayer->boxes++;
-            boxCompleted = true;
-        }
-    }
-    
-    return boxCompleted;
-}
-int StrategicPlayer::getPoints() {return points;}
-int StrategicPlayer::getBoxes() {return boxes;}
