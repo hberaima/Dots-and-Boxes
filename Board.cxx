@@ -37,31 +37,48 @@ char** Board::initialize_board(int rows, int columns) {
 
 // Function to print the board with row and column indices
 void Board::printBoard() const {
-    std::cout << "  ";  // Leading space for row numbers
+    // Print the X-axis tens indices
+    std::cout << "    ";  // Leading space for alignment
+    for (int col = 0; col < numCols; ++col) {
+        if (col % 10 == 0) {
+            std::cout << col / 10;  // Print tens place for column numbers
+        } else {
+            std::cout << " ";  // Space for non-tens place
+        }
+    }
+    std::cout << std::endl;
+
+    // Print the X-axis ones indices
+    std::cout << "    ";  // Leading space for alignment
+    for (int col = 0; col < numCols; ++col) {
+        std::cout << col % 10;  // Print ones place for column numbers
+    }
+    std::cout << std::endl;
+
+    // Print the game board with Y-axis indices
+    for (int row = 0; row < numRows; ++row) {
+        // Print Y-axis tens place
+        if (row % 10 == 0) {
+            std::cout << row / 10;
+        } else {
+            std::cout << " ";
+        }
+
+        // Print Y-axis ones place
+        std::cout << row % 10 << " ";
+
+        // Print the board's content
         for (int col = 0; col < numCols; ++col) {
-            if (col % 10 == 0) {
-                std::cout << col / 10;  // Print tens place for column numbers
+            if (gameBoard[row][col] == '\0') {
+                std::cout << " ";  // Empty space for uninitialized cells
             } else {
-                std::cout << " ";  // Space for non-tens place
+                std::cout << gameBoard[row][col];  // Print the actual board content
             }
         }
-        std::cout << std::flush;
         std::cout << std::endl;
-
-    cout << "  ";
-    for (int j = 0; j < numCols; ++j) {
-        cout << j % 10;  // Print column indices
-    }
-    cout << endl;
-    
-    for (int i = 0; i < numRows; ++i) {
-        cout << (i < 10 ? "" : "") << i << " ";  // Print row indices
-        for (int j = 0; j < numCols; ++j) {
-            cout << gameBoard[i][j];  // Print board cells
-        }
-        cout << endl;
     }
 }
+
 
 int Board::GetAllEmptyLineLocations(int actualRows, int actualColumns, char** board, int** emptyLocations) { 
     int count = 0;
