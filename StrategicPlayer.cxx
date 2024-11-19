@@ -109,7 +109,7 @@ void StrategicPlayer::SelectLineLocation(int actualRows, int actualColumns, char
         int boxesBefore = boxes;
         
         // Evaluate position
-        int score = evaluateMove(board, actualRows, actualColumns, 2, playerName, emptyLocations, emptyCount);
+        int score = evaluateMove(board, actualRows, actualColumns, 3, playerName, emptyLocations, emptyCount);
 
         // Undo move
         board[row][col] = ' ';

@@ -21,7 +21,7 @@ void RandomPlayer::SelectLineLocation(int actualRows, int actualColumns, char** 
         std::cout << "No empty spots available!" << std::endl;
         return;
     }
-    srand(time(nullptr));
+    srand(time(0));
     // Select a random empty spot
     int randomIndex = rand() % emptyCount;  // Get a random index using custom_rand
     Rrow_move = emptyLocations[randomIndex][0];
