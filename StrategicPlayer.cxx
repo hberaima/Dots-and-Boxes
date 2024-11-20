@@ -1,15 +1,26 @@
 #include "StrategicPlayer.h"
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
-#include <cctype>
-#include <climits>
-#include <algorithm>
+
+
 
 using namespace std;
 
+// Constants to replace INT_MIN and INT_MAX
+const int MY_INT_MIN = -2147483648; // Smallest int value
+const int MY_INT_MAX = 2147483647;  // Largest int value
+
+// Custom functions to replace std::max and std::min
+inline int myMax(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+inline int myMin(int a, int b) {
+    return (a < b) ? a : b;
+}
+
 // Constructor
-StrategicPlayer::StrategicPlayer(char playerName) : name(playerName), boxes(0), Srow_move(-1), Scol_move(-1) {}
+StrategicPlayer::StrategicPlayer(char playerName) 
+    : name(playerName), boxes(0), Srow_move(-1), Scol_move(-1) {}
 
 // Destructor
 StrategicPlayer::~StrategicPlayer() {}
@@ -25,20 +36,19 @@ void StrategicPlayer::copyBoard(char** source, char** destination, int rows, int
 
 // Evaluate a move recursively using minimax algorithm
 int StrategicPlayer::evaluateMove(char** board, int rows, int columns, int depth, char player, int** emptyLocations, int emptyCount) {
-
     // Base case: reached maximum depth or no moves left
     if (depth == 0 || emptyCount == 0) {
         return countBoxes(board, rows, columns, player);
     }
 
-    int bestScore = (player == name) ? INT_MIN : INT_MAX;
+    int bestScore = (player == name) ? MY_INT_MIN : MY_INT_MAX;
     char opponent = (player == 'B') ? 'R' : 'B';
 
     // Try each possible move
     for (int i = 0; i < emptyCount; ++i) {
         int row = emptyLocations[i][0];
         int col = emptyLocations[i][1];
-        
+
         // Skip invalid moves
         if (board[row][col] != ' ') continue;
 
@@ -46,7 +56,7 @@ int StrategicPlayer::evaluateMove(char** board, int rows, int columns, int depth
         board[row][col] = tolower(player);
         int boxesBefore = boxes;
         bool completedBox = checkForBoxStrategic(board, row, col, player, rows, columns, this);
-        
+
         // Create new empty locations array excluding current move
         int** newEmptyLocations = new int*[emptyCount - 1];
         int newIndex = 0;
@@ -79,9 +89,9 @@ int StrategicPlayer::evaluateMove(char** board, int rows, int columns, int depth
 
         // Update best score
         if (player == name) {
-            bestScore = max(bestScore, score);
+            bestScore = myMax(bestScore, score);
         } else {
-            bestScore = min(bestScore, score);
+            bestScore = myMin(bestScore, score);
         }
     }
 
@@ -92,7 +102,7 @@ int StrategicPlayer::evaluateMove(char** board, int rows, int columns, int depth
 void StrategicPlayer::SelectLineLocation(int actualRows, int actualColumns, char** board, int** emptyLocations, int emptyCount, char playerName) {
     if (emptyCount == 0) return;
 
-    int bestScore = INT_MIN;
+    int bestScore = MY_INT_MIN;
     Srow_move = emptyLocations[0][0];
     Scol_move = emptyLocations[0][1];
 
@@ -107,7 +117,7 @@ void StrategicPlayer::SelectLineLocation(int actualRows, int actualColumns, char
         // Make move
         board[row][col] = tolower(playerName);
         int boxesBefore = boxes;
-        
+
         // Evaluate position
         int score = evaluateMove(board, actualRows, actualColumns, 3, playerName, emptyLocations, emptyCount);
 
@@ -143,53 +153,49 @@ int StrategicPlayer::countBoxes(char** board, int rows, int columns, char player
 
 // Check for completed boxes
 bool StrategicPlayer::checkForBoxStrategic(char** board, int x, int y, char player, int rows, int columns, StrategicPlayer* StrategicPlayer) {
-        bool boxCompleted = false;
+    bool boxCompleted = false;
 
-        // Horizontal line case (top or bottom of the box)
-        if (x % 2 == 0 && y % 2 == 1) {
-            // Check above for a box
-            if (x > 0 &&
-                board[x - 1][y - 1] != ' ' &&  // Left vertical line
-                board[x - 1][y + 1] != ' ' &&  // Right vertical line
-                board[x - 2][y] != ' ') {      // Top horizontal line
-                // Top box is completed
-                board[x - 1][y] = toupper(player);  // Mark the box with the uppercase player symbol
-                StrategicPlayer->boxes++;
-                boxCompleted = true;
-            }
-            // Check below for a box
-            if (x < rows - 1 &&
-                board[x + 1][y - 1] != ' ' &&  // Left vertical line
-                board[x + 1][y + 1] != ' ' &&  // Right vertical line
-                board[x + 2][y] != ' ') {      // Bottom horizontal line
-                // Bottom box is completed
-                board[x + 1][y] = toupper(player);  // Mark the box with the uppercase player symbol
-                StrategicPlayer->boxes++;
-                boxCompleted = true;
-            }
+    // Horizontal line case (top or bottom of the box)
+    if (x % 2 == 0 && y % 2 == 1) {
+        // Check above for a box
+        if (x > 0 &&
+            board[x - 1][y - 1] != ' ' && 
+            board[x - 1][y + 1] != ' ' && 
+            board[x - 2][y] != ' ') {
+            board[x - 1][y] = toupper(player);
+            StrategicPlayer->boxes++;
+            boxCompleted = true;
         }
-        // Vertical line case (left or right of the box)
-        else if (y % 2 == 0 && x % 2 == 1) {
-            // Check to the left for a box
-            if (y > 0 &&
-                board[x - 1][y - 1] != ' ' &&  // Top horizontal line
-                board[x + 1][y - 1] != ' ' &&  // Bottom horizontal line
-                board[x][y - 2] != ' ') {      // Left vertical line
-                // Left box is completed
-                board[x][y - 1] = toupper(player);  // Mark the box with the uppercase player symbol
-                StrategicPlayer->boxes++;
-                boxCompleted = true;
-            }
-            // Check to the right for a box
-            if (y < columns - 1 &&
-                board[x - 1][y + 1] != ' ' &&  // Top horizontal line
-                board[x + 1][y + 1] != ' ' &&  // Bottom horizontal line
-                board[x][y + 2] != ' ') {      // Right vertical line
-                // Right box is completed
-                board[x][y + 1] = toupper(player);  // Mark the box with the uppercase player symbol
-                StrategicPlayer->boxes++;
-                boxCompleted = true;
-            }
+        // Check below for a box
+        if (x < rows - 1 &&
+            board[x + 1][y - 1] != ' ' && 
+            board[x + 1][y + 1] != ' ' && 
+            board[x + 2][y] != ' ') {
+            board[x + 1][y] = toupper(player);
+            StrategicPlayer->boxes++;
+            boxCompleted = true;
         }
-        return boxCompleted;
     }
+    // Vertical line case (left or right of the box)
+    else if (y % 2 == 0 && x % 2 == 1) {
+        // Check to the left for a box
+        if (y > 0 &&
+            board[x - 1][y - 1] != ' ' && 
+            board[x + 1][y - 1] != ' ' && 
+            board[x][y - 2] != ' ') {
+            board[x][y - 1] = toupper(player);
+            StrategicPlayer->boxes++;
+            boxCompleted = true;
+        }
+        // Check to the right for a box
+        if (y < columns - 1 &&
+            board[x - 1][y + 1] != ' ' && 
+            board[x + 1][y + 1] != ' ' && 
+            board[x][y + 2] != ' ') {
+            board[x][y + 1] = toupper(player);
+            StrategicPlayer->boxes++;
+            boxCompleted = true;
+        }
+    }
+    return boxCompleted;
+}

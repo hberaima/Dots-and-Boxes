@@ -1,7 +1,5 @@
 #include "RandomPlayer.h"
 #include <iostream>
-#include <cstdlib>  // For rand()
-#include <ctime>    // For seeding random numbers
 using namespace std;
 
 
